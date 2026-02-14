@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ動画 提案AIアシスタント</title>
+    <link rel="stylesheet" href="assets/css/proposal.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>インタラクティブ動画 提案AIアシスタント</h1>
+            <p class="subtitle">お客様の業界・商材・課題から最適なインタラクティブ動画のユースケースをAIが提案します</p>
+        </header>
+
+        <!-- API Key Section -->
+        <div id="api-key-section" class="card">
+            <h2>OpenAI API設定</h2>
+            <div class="form-group">
+                <label for="api-key">APIキー</label>
+                <div class="api-key-input-wrapper">
+                    <input type="password" id="api-key" placeholder="sk-..." autocomplete="off">
+                    <button id="toggle-key-visibility" class="btn-icon" title="表示/非表示">👁</button>
+                </div>
+                <p class="hint">APIキーはブラウザのローカルストレージに保存され、外部には送信されません。</p>
+            </div>
+            <button id="save-api-key" class="btn btn-primary">設定を保存</button>
+            <div id="api-key-status" class="status-message"></div>
+        </div>
+
+        <!-- Step 1: Input Form -->
+        <div id="step-input" class="card">
+            <div class="step-indicator">
+                <div class="step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">情報入力</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">ユースケース選択</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">詳細提案</span>
+                </div>
+            </div>
+
+            <h2>お客様情報の入力</h2>
+            <form id="input-form">
+                <div class="form-group">
+                    <label for="industry">業界 <span class="required">*</span></label>
+                    <select id="industry">
+                        <option value="">選択してください</option>
+                        <option value="製造業">製造業</option>
+                        <option value="IT・通信">IT・通信</option>
+                        <option value="金融・保険">金融・保険</option>
+                        <option value="不動産">不動産</option>
+                        <option value="小売・EC">小売・EC</option>
+                        <option value="飲食・フード">飲食・フード</option>
+                        <option value="医療・ヘルスケア">医療・ヘルスケア</option>
+                        <option value="教育">教育</option>
+                        <option value="旅行・観光">旅行・観光</option>
+                        <option value="自動車">自動車</option>
+                        <option value="美容・コスメ">美容・コスメ</option>
+                        <option value="人材・HR">人材・HR</option>
+                        <option value="エンタメ・メディア">エンタメ・メディア</option>
+                        <option value="建設・建築">建設・建築</option>
+                        <option value="物流・運輸">物流・運輸</option>
+                        <option value="その他">その他</option>
+                    </select>
+                    <input type="text" id="industry-other" class="hidden" placeholder="業界を入力してください">
+                </div>
+
+                <div class="form-group">
+                    <label for="product">取り扱い商材・サービス <span class="required">*</span></label>
+                    <input type="text" id="product" placeholder="例: クラウド型会計ソフト、高級スキンケア化粧品、注文住宅 など">
+                </div>
+
+                <div class="form-group">
+                    <label>お客様の状況 <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="input-type" value="challenge" checked>
+                            <span>課題から提案する</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="input-type" value="goal">
+                            <span>実施したいゴールから提案する</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="challenge-group">
+                    <label for="challenge">お客様の課題</label>
+                    <textarea id="challenge" rows="4" placeholder="例: Webサイトの離脱率が高い、商品の使い方が伝わりにくい、営業資料の説明が複雑 など"></textarea>
+                </div>
+
+                <div class="form-group hidden" id="goal-group">
+                    <label for="goal">実施したいゴール</label>
+                    <textarea id="goal" rows="4" placeholder="例: コンバージョン率を2倍にしたい、新規顧客の獲得を増やしたい、研修の理解度を向上させたい など"></textarea>
+                </div>
+
+                <button type="submit" id="generate-btn" class="btn btn-primary btn-large">
+                    <span class="btn-text">ユースケースを生成する</span>
+                    <span class="btn-loading hidden">
+                        <span class="spinner"></span>AIが提案を作成中...
+                    </span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Step 2: Use Case Selection -->
+        <div id="step-usecases" class="card hidden">
+            <div class="step-indicator">
+                <div class="step completed" data-step="1">
+                    <span class="step-number">&#10003;</span>
+                    <span class="step-label">情報入力</span>
+                </div>
+                <div class="step-line active"></div>
+                <div class="step active" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">ユースケース選択</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">詳細提案</span>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>提案ユースケース一覧</h2>
+                <p class="section-description" id="input-summary"></p>
+            </div>
+
+            <div id="usecases-list" class="usecases-grid"></div>
+
+            <div class="action-bar">
+                <button id="back-to-input" class="btn btn-secondary">入力に戻る</button>
+                <button id="regenerate-btn" class="btn btn-outline">再生成する</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Detailed Proposal -->
+        <div id="step-detail" class="card hidden">
+            <div class="step-indicator">
+                <div class="step completed" data-step="1">
+                    <span class="step-number">&#10003;</span>
+                    <span class="step-label">情報入力</span>
+                </div>
+                <div class="step-line active"></div>
+                <div class="step completed" data-step="2">
+                    <span class="step-number">&#10003;</span>
+                    <span class="step-label">ユースケース選択</span>
+                </div>
+                <div class="step-line active"></div>
+                <div class="step active" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">詳細提案</span>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 id="detail-title"></h2>
+            </div>
+
+            <div id="detail-loading" class="loading-container hidden">
+                <div class="spinner-large"></div>
+                <p>AIが詳細提案を作成中...</p>
+            </div>
+
+            <div id="detail-content" class="detail-sections">
+                <!-- Video Scenario -->
+                <div class="detail-section">
+                    <div class="detail-section-header">
+                        <span class="detail-icon">🎬</span>
+                        <h3>動画シナリオ</h3>
+                    </div>
+                    <div id="detail-scenario" class="detail-body"></div>
+                </div>
+
+                <!-- Expected Challenges -->
+                <div class="detail-section">
+                    <div class="detail-section-header">
+                        <span class="detail-icon">⚠️</span>
+                        <h3>想定される課題</h3>
+                    </div>
+                    <div id="detail-challenges" class="detail-body"></div>
+                </div>
+
+                <!-- Expected Results -->
+                <div class="detail-section">
+                    <div class="detail-section-header">
+                        <span class="detail-icon">📊</span>
+                        <h3>想定される結果</h3>
+                    </div>
+                    <div id="detail-results" class="detail-body"></div>
+                </div>
+
+                <!-- Expected ROI -->
+                <div class="detail-section">
+                    <div class="detail-section-header">
+                        <span class="detail-icon">💰</span>
+                        <h3>想定ROI</h3>
+                    </div>
+                    <div id="detail-roi" class="detail-body"></div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button id="back-to-usecases" class="btn btn-secondary">ユースケース一覧に戻る</button>
+                <button id="export-btn" class="btn btn-primary">提案書をエクスポート</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Powered by AI | インタラクティブ動画 提案AIアシスタント</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/proposal.js"></script>
+</body>
+</html>
