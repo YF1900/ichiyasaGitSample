@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEFL Speaking Practice</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            padding: 24px 16px 8px;
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            letter-spacing: 0.05em;
+        }
+
+        header p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 720px;
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* --- Avatar --- */
+        .avatar-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .avatar-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 3px solid rgba(100, 180, 255, 0.3);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .avatar-ring.speaking {
+            border-color: #64b4ff;
+            box-shadow: 0 0 20px rgba(100, 180, 255, 0.5);
+            animation: pulse-ring 1.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.06); opacity: 0.7; }
+        }
+
+        .avatar-face {
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #4a6fa5, #2c3e6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .avatar-face svg {
+            width: 80%;
+            height: 80%;
+        }
+
+        .avatar-name {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .question-card .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+
+        .question-card .task-type {
+            font-size: 0.85rem;
+            color: #64b4ff;
+            margin-bottom: 8px;
+        }
+
+        .question-card .question-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* --- Timer --- */
+        .timer-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .timer-bar .time-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            min-width: 80px;
+        }
+
+        .timer-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: #64b4ff;
+            border-radius: 3px;
+            transition: width 0.3s, background 0.3s;
+            width: 100%;
+        }
+
+        .timer-fill.warning { background: #f0ad4e; }
+        .timer-fill.danger { background: #e74c3c; }
+
+        .timer-digits {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, opacity 0.15s;
+        }
+
+        button:active { transform: scale(0.96); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .btn-primary {
+            background: #64b4ff;
+            color: #0f0c29;
+        }
+
+        .btn-record {
+            background: #e74c3c;
+            color: #fff;
+            position: relative;
+        }
+
+        .btn-record.recording {
+            animation: blink-record 1s ease-in-out infinite;
+        }
+
+        @keyframes blink-record {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+
+        /* --- Transcript --- */
+        .transcript-area {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 80px;
+            display: none;
+        }
+
+        .transcript-area.visible { display: block; }
+
+        .transcript-area .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+
+        .transcript-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .transcript-text .interim {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- Score Card --- */
+        .score-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 24px;
+            display: none;
+        }
+
+        .score-card.visible { display: block; }
+
+        .score-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .score-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .score-circle.high { background: rgba(46, 204, 113, 0.25); color: #2ecc71; }
+        .score-circle.mid  { background: rgba(240, 173, 78, 0.25); color: #f0ad4e; }
+        .score-circle.low  { background: rgba(231, 76, 60, 0.25); color: #e74c3c; }
+
+        .score-summary h3 { font-size: 1.1rem; margin-bottom: 4px; }
+        .score-summary p { font-size: 0.85rem; opacity: 0.7; }
+
+        .score-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .score-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .score-item .metric {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+
+        .score-item .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .feedback-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        /* --- Task Selector --- */
+        .task-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .task-selector button {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            border-radius: 20px;
+        }
+
+        .task-selector button.active {
+            background: #64b4ff;
+            color: #0f0c29;
+        }
+
+        .task-selector button:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        /* --- Status --- */
+        .status-msg {
+            text-align: center;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            min-height: 1.2em;
+        }
+
+        .browser-warning {
+            background: rgba(240, 173, 78, 0.2);
+            border: 1px solid rgba(240, 173, 78, 0.4);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+        }
+
+        .back-link {
+            text-align: center;
+            padding: 16px;
+        }
+
+        .back-link a {
+            color: #64b4ff;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>TOEFL Speaking Practice</h1>
+    <p>Practice with an AI examiner</p>
+</header>
+
+<div class="app">
+    <div class="browser-warning" id="browserWarning">
+        Your browser does not support the Web Speech API. Please use Google Chrome for the best experience.
+    </div>
+
+    <!-- Task type selector -->
+    <div class="task-selector" id="taskSelector">
+        <button class="active" data-task="independent">Independent</button>
+        <button data-task="campus">Campus Situation</button>
+        <button data-task="academic">Academic</button>
+    </div>
+
+    <!-- Avatar -->
+    <div class="avatar-area">
+        <div class="avatar-wrapper">
+            <div class="avatar-ring" id="avatarRing"></div>
+            <div class="avatar-face">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="38" r="22" fill="#e0c9a6"/>
+                    <circle cx="42" cy="34" r="3" fill="#2c3e50"/>
+                    <circle cx="58" cy="34" r="3" fill="#2c3e50"/>
+                    <path id="mouth" d="M42 46 Q50 52 58 46" stroke="#2c3e50" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <path d="M30 28 Q35 16 50 16 Q65 16 70 28" fill="#5a3825"/>
+                    <rect x="25" y="60" rx="12" width="50" height="35" fill="#3498db"/>
+                </svg>
+            </div>
+        </div>
+        <div class="avatar-name">TOEFL Examiner</div>
+    </div>
+
+    <!-- Question -->
+    <div class="question-card">
+        <div class="label">Question</div>
+        <div class="task-type" id="taskType">Independent Task</div>
+        <div class="question-text" id="questionText">Press "New Question" to begin your practice session.</div>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer-bar" id="timerBar" style="visibility: hidden;">
+        <span class="time-label" id="timerLabel">Prep Time</span>
+        <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
+        <span class="timer-digits" id="timerDigits">--</span>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn-primary" id="btnNew">New Question</button>
+        <button class="btn-record" id="btnRecord" disabled>Start Recording</button>
+        <button class="btn-secondary" id="btnSkip" disabled>Skip</button>
+    </div>
+
+    <div class="status-msg" id="statusMsg"></div>
+
+    <!-- Transcript -->
+    <div class="transcript-area" id="transcriptArea">
+        <div class="label">Your Response</div>
+        <div class="transcript-text" id="transcriptText"></div>
+    </div>
+
+    <!-- Score -->
+    <div class="score-card" id="scoreCard">
+        <div class="score-header">
+            <div class="score-circle" id="scoreCircle">--</div>
+            <div class="score-summary">
+                <h3 id="scoreTitle">Your Score</h3>
+                <p id="scoreSubtitle"></p>
+            </div>
+        </div>
+        <div class="score-details" id="scoreDetails"></div>
+        <div class="feedback-text" id="feedbackText"></div>
+    </div>
+</div>
+
+<div class="back-link">
+    <a href="index.html">&larr; Back to main site</a>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ========== TOEFL Question Bank ==========
+    const QUESTIONS = {
+        independent: [
+            "Some people prefer to work in a team, while others prefer to work alone. Which do you prefer and why?",
+            "Do you agree or disagree with the following statement: It is better to study abroad than to study in your home country. Explain why.",
+            "What is the most important quality a good leader should have? Use specific reasons and examples to support your answer.",
+            "Some people enjoy taking risks, while others prefer a safe and predictable life. Which lifestyle do you think leads to greater happiness?",
+            "If you could change one thing about your hometown, what would you change and why?",
+            "Do you think it is more important to be able to work with a group of people on a team or to work independently? Use reasons and examples to support your answer.",
+            "Some students prefer to take courses with frequent small assignments, while others prefer courses with fewer major assignments. Which do you prefer?",
+            "Do you agree or disagree that technology has made our lives easier? Give specific examples to support your opinion.",
+            "If you had extra money, would you rather spend it on a vacation or save it for the future? Explain your choice.",
+            "Some people believe that university students should be required to attend classes. Others believe that going to classes should be optional. Which point of view do you agree with?"
+        ],
+        campus: [
+            "The university has announced that it will close the campus library on weekends due to budget cuts. The student in the conversation disagrees with this decision. Summarize the student's opinion and explain the reasons they give for that opinion.",
+            "The university plans to replace the current cafeteria with a new food court featuring chain restaurants. A student expresses concern about this plan. Explain the student's opinion and the reasons behind it.",
+            "The university is considering a policy that would require all first-year students to live on campus. The student supports this idea. Summarize the reasons the student gives for supporting this policy.",
+            "A notice announces that the university will start charging a fee for parking on campus. Explain the student's reaction and the reasons they give.",
+            "The university plans to extend library hours during finals week. A student thinks this is a great idea. Explain why the student supports this change."
+        ],
+        academic: [
+            "Using the examples from the lecture, explain how animals adapt to extreme environments.",
+            "The professor describes two different theories of motivation. Explain each theory and how they differ.",
+            "Using the example discussed in the lecture, explain the concept of opportunity cost.",
+            "The professor discusses the bystander effect. Explain what it is and use the example from the lecture to illustrate it.",
+            "Explain how the professor uses the example of the printing press to illustrate the concept of disruptive innovation."
+        ]
+    };
+
+    const TASK_LABELS = {
+        independent: 'Independent Task',
+        campus: 'Campus Situation Task',
+        academic: 'Academic Task'
+    };
+
+    const PREP_TIME = { independent: 15, campus: 30, academic: 30 };
+    const RESPONSE_TIME = { independent: 45, campus: 60, academic: 60 };
+
+    // ========== State ==========
+    let currentTask = 'independent';
+    let currentQuestion = '';
+    let phase = 'idle'; // idle | speaking-question | prep | recording | scoring
+    let timer = null;
+    let timeLeft = 0;
+    let totalTime = 0;
+    let recognition = null;
+    let transcript = '';
+    let interimTranscript = '';
+    let speechSupported = true;
+
+    // ========== DOM ==========
+    const $ = (id) => document.getElementById(id);
+    const btnNew = $('btnNew');
+    const btnRecord = $('btnRecord');
+    const btnSkip = $('btnSkip');
+    const questionText = $('questionText');
+    const taskType = $('taskType');
+    const timerBar = $('timerBar');
+    const timerLabel = $('timerLabel');
+    const timerFill = $('timerFill');
+    const timerDigits = $('timerDigits');
+    const avatarRing = $('avatarRing');
+    const transcriptArea = $('transcriptArea');
+    const transcriptText = $('transcriptText');
+    const scoreCard = $('scoreCard');
+    const statusMsg = $('statusMsg');
+
+    // ========== Speech Support Check ==========
+    if (!('speechSynthesis' in window) || !('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+        $('browserWarning').style.display = 'block';
+        speechSupported = false;
+    }
+
+    // ========== Task Selector ==========
+    document.querySelectorAll('#taskSelector button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (phase !== 'idle') return;
+            document.querySelectorAll('#taskSelector button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTask = btn.dataset.task;
+        });
+    });
+
+    // ========== TTS ==========
+    function speak(text) {
+        return new Promise((resolve) => {
+            if (!speechSupported) { resolve(); return; }
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'en-US';
+            utter.rate = 0.92;
+            utter.pitch = 1.0;
+
+            // Try to pick a good English voice
+            const voices = window.speechSynthesis.getVoices();
+            const preferred = voices.find(v => v.lang === 'en-US' && v.name.includes('Google'));
+            if (preferred) utter.voice = preferred;
+
+            avatarRing.classList.add('speaking');
+            utter.onend = () => { avatarRing.classList.remove('speaking'); resolve(); };
+            utter.onerror = () => { avatarRing.classList.remove('speaking'); resolve(); };
+            window.speechSynthesis.speak(utter);
+        });
+    }
+
+    // ========== Timer ==========
+    function startTimer(seconds, label, onDone) {
+        timeLeft = seconds;
+        totalTime = seconds;
+        timerLabel.textContent = label;
+        timerBar.style.visibility = 'visible';
+        updateTimerUI();
+
+        timer = setInterval(() => {
+            timeLeft--;
+            updateTimerUI();
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                timer = null;
+                onDone();
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        if (timer) { clearInterval(timer); timer = null; }
+        timerBar.style.visibility = 'hidden';
+    }
+
+    function updateTimerUI() {
+        const pct = (timeLeft / totalTime) * 100;
+        timerFill.style.width = pct + '%';
+        timerDigits.textContent = timeLeft + 's';
+        timerFill.classList.remove('warning', 'danger');
+        if (pct < 20) timerFill.classList.add('danger');
+        else if (pct < 40) timerFill.classList.add('warning');
+    }
+
+    // ========== Speech Recognition ==========
+    function createRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return null;
+        const rec = new SpeechRecognition();
+        rec.continuous = true;
+        rec.interimResults = true;
+        rec.lang = 'en-US';
+        rec.maxAlternatives = 1;
+
+        rec.onresult = (e) => {
+            let final = '';
+            let interim = '';
+            for (let i = 0; i < e.results.length; i++) {
+                if (e.results[i].isFinal) {
+                    final += e.results[i][0].transcript + ' ';
+                } else {
+                    interim += e.results[i][0].transcript;
+                }
+            }
+            transcript = final.trim();
+            interimTranscript = interim;
+            updateTranscript();
+        };
+
+        rec.onerror = (e) => {
+            if (e.error === 'no-speech') return;
+            console.warn('Speech recognition error:', e.error);
+        };
+
+        rec.onend = () => {
+            // Restart if still in recording phase
+            if (phase === 'recording') {
+                try { rec.start(); } catch (e) { /* ignore */ }
+            }
+        };
+
+        return rec;
+    }
+
+    function updateTranscript() {
+        transcriptArea.classList.add('visible');
+        transcriptText.innerHTML = transcript +
+            (interimTranscript ? ' <span class="interim">' + interimTranscript + '</span>' : '');
+    }
+
+    // ========== Scoring ==========
+    function scoreResponse(text, taskKey) {
+        const words = text.split(/\s+/).filter(w => w.length > 0);
+        const wordCount = words.length;
+        const uniqueWords = new Set(words.map(w => w.toLowerCase().replace(/[^a-z']/g, '')));
+        const uniqueCount = uniqueWords.size;
+        const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        const sentenceCount = Math.max(sentences.length, 1);
+        const avgWordsPerSentence = wordCount / sentenceCount;
+
+        const expectedTime = RESPONSE_TIME[taskKey];
+
+        // 1. Delivery (fluency / length) - 0~4
+        let delivery = 0;
+        const targetWords = expectedTime * 2.5; // ~150 wpm target
+        const lengthRatio = wordCount / targetWords;
+        if (lengthRatio >= 0.8) delivery = 4;
+        else if (lengthRatio >= 0.6) delivery = 3;
+        else if (lengthRatio >= 0.35) delivery = 2;
+        else if (lengthRatio >= 0.15) delivery = 1;
+
+        // 2. Language Use (vocabulary diversity) - 0~4
+        let languageUse = 0;
+        const diversityRatio = wordCount > 0 ? uniqueCount / wordCount : 0;
+        // Check for transition / linking words
+        const transitions = /\b(however|therefore|moreover|furthermore|although|because|since|consequently|in addition|for example|for instance|on the other hand|in contrast|as a result)\b/gi;
+        const transitionCount = (text.match(transitions) || []).length;
+
+        if (diversityRatio >= 0.55 && transitionCount >= 2) languageUse = 4;
+        else if (diversityRatio >= 0.45 && transitionCount >= 1) languageUse = 3;
+        else if (diversityRatio >= 0.35) languageUse = 2;
+        else if (wordCount > 5) languageUse = 1;
+
+        // 3. Topic Development (structure) - 0~4
+        let topicDev = 0;
+        if (sentenceCount >= 5 && avgWordsPerSentence >= 8 && avgWordsPerSentence <= 25) topicDev = 4;
+        else if (sentenceCount >= 3 && avgWordsPerSentence >= 6) topicDev = 3;
+        else if (sentenceCount >= 2) topicDev = 2;
+        else if (sentenceCount >= 1 && wordCount > 10) topicDev = 1;
+
+        const total = Math.round(((delivery + languageUse + topicDev) / 12) * 30); // Scale to 0-30
+
+        return { total, delivery, languageUse, topicDev, wordCount, uniqueCount, sentenceCount, avgWordsPerSentence: Math.round(avgWordsPerSentence * 10) / 10, transitionCount };
+    }
+
+    function generateFeedback(score) {
+        const tips = [];
+
+        if (score.delivery < 3) {
+            tips.push("Try to speak more. Aim for at least " + Math.round(RESPONSE_TIME[currentTask] * 2) + " words to fully use your time.");
+        }
+        if (score.languageUse < 3) {
+            tips.push("Use more varied vocabulary and linking words (e.g., 'however', 'for example', 'because') to connect your ideas.");
+        }
+        if (score.topicDev < 3) {
+            tips.push("Structure your response with a clear opinion, supporting reasons, and examples. Aim for at least 3-5 sentences.");
+        }
+        if (score.total >= 24) {
+            tips.push("Excellent work! Your response was well-developed with good vocabulary and structure.");
+        } else if (score.total >= 18) {
+            tips.push("Good effort! With a bit more practice on the areas above, you can reach an even higher score.");
+        }
+
+        return tips.join(' ');
+    }
+
+    function showScore(score) {
+        const card = $('scoreCard');
+        const circle = $('scoreCircle');
+        const details = $('scoreDetails');
+        const feedback = $('feedbackText');
+
+        circle.textContent = score.total;
+        circle.className = 'score-circle ' + (score.total >= 22 ? 'high' : score.total >= 14 ? 'mid' : 'low');
+
+        $('scoreSubtitle').textContent = 'out of 30 (TOEFL Speaking scale)';
+
+        details.innerHTML = [
+            { label: 'Delivery', value: score.delivery + ' / 4' },
+            { label: 'Language Use', value: score.languageUse + ' / 4' },
+            { label: 'Topic Development', value: score.topicDev + ' / 4' },
+            { label: 'Word Count', value: score.wordCount },
+            { label: 'Unique Words', value: score.uniqueCount },
+            { label: 'Sentences', value: score.sentenceCount },
+        ].map(item =>
+            '<div class="score-item"><div class="metric">' + item.label + '</div><div class="value">' + item.value + '</div></div>'
+        ).join('');
+
+        feedback.textContent = generateFeedback(score);
+        card.classList.add('visible');
+    }
+
+    // ========== Flow ==========
+    function pickQuestion() {
+        const pool = QUESTIONS[currentTask];
+        return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    async function startNewQuestion() {
+        // Reset
+        stopTimer();
+        if (recognition) { try { recognition.stop(); } catch (e) {} }
+        transcript = '';
+        interimTranscript = '';
+        transcriptArea.classList.remove('visible');
+        scoreCard.classList.remove('visible');
+        transcriptText.innerHTML = '';
+
+        currentQuestion = pickQuestion();
+        taskType.textContent = TASK_LABELS[currentTask];
+        questionText.textContent = currentQuestion;
+
+        btnNew.disabled = true;
+        btnRecord.disabled = true;
+        btnSkip.disabled = false;
+
+        // Avatar reads the question
+        phase = 'speaking-question';
+        statusMsg.textContent = 'Examiner is reading the question...';
+        await speak(currentQuestion);
+
+        if (phase !== 'speaking-question') return; // skipped
+
+        // Preparation time
+        phase = 'prep';
+        statusMsg.textContent = 'Prepare your response...';
+        startTimer(PREP_TIME[currentTask], 'Prep Time', () => {
+            startRecording();
+        });
+        btnRecord.disabled = false;
+        btnRecord.textContent = 'Start Recording';
+    }
+
+    function startRecording() {
+        stopTimer();
+        phase = 'recording';
+        statusMsg.textContent = 'Recording... Speak now!';
+        btnRecord.textContent = 'Stop Recording';
+        btnRecord.classList.add('recording');
+        btnRecord.disabled = false;
+        btnSkip.disabled = true;
+
+        transcriptArea.classList.add('visible');
+
+        if (speechSupported) {
+            recognition = createRecognition();
+            if (recognition) {
+                try { recognition.start(); } catch (e) {}
+            }
+        }
+
+        startTimer(RESPONSE_TIME[currentTask], 'Response Time', () => {
+            finishRecording();
+        });
+    }
+
+    function finishRecording() {
+        stopTimer();
+        phase = 'scoring';
+        btnRecord.classList.remove('recording');
+        btnRecord.textContent = 'Start Recording';
+        btnRecord.disabled = true;
+        btnSkip.disabled = true;
+
+        if (recognition) {
+            try { recognition.stop(); } catch (e) {}
+            recognition = null;
+        }
+
+        // Small delay to capture final transcript
+        setTimeout(() => {
+            if (!transcript || transcript.trim().length === 0) {
+                statusMsg.textContent = 'No speech detected. Try again with a new question.';
+                phase = 'idle';
+                btnNew.disabled = false;
+                return;
+            }
+
+            const score = scoreResponse(transcript, currentTask);
+            showScore(score);
+            statusMsg.textContent = 'Scoring complete!';
+            phase = 'idle';
+            btnNew.disabled = false;
+        }, 500);
+    }
+
+    // ========== Event Handlers ==========
+    btnNew.addEventListener('click', () => {
+        if (phase === 'idle') startNewQuestion();
+    });
+
+    btnRecord.addEventListener('click', () => {
+        if (phase === 'prep') {
+            startRecording();
+        } else if (phase === 'recording') {
+            finishRecording();
+        }
+    });
+
+    btnSkip.addEventListener('click', () => {
+        window.speechSynthesis.cancel();
+        avatarRing.classList.remove('speaking');
+        stopTimer();
+        if (phase === 'speaking-question') {
+            phase = 'prep';
+            statusMsg.textContent = 'Prepare your response...';
+            startTimer(PREP_TIME[currentTask], 'Prep Time', () => {
+                startRecording();
+            });
+            btnRecord.disabled = false;
+            btnRecord.textContent = 'Start Recording';
+        } else if (phase === 'prep') {
+            startRecording();
+        }
+    });
+
+    // Pre-load voices
+    if (speechSupported) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
+})();
+</script>
+
+</body>
+</html>
