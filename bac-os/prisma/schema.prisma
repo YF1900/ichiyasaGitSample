@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Constraint {
+  id          String       @id @default(cuid())
+  title       String
+  description String
+  category    String       // market | resource | technical | regulation | other
+  severity    String       // low | medium | high | critical
+  owner       String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  hypotheses  Hypothesis[]
+
+  @@map("constraints")
+}
+
+model Hypothesis {
+  id              String       @id @default(cuid())
+  title           String
+  description     String
+  assumption      String
+  expectedOutcome String
+  status          String       // draft | testing | validated | invalidated
+  owner           String
+  constraintId    String?
+  constraint      Constraint?  @relation(fields: [constraintId], references: [id])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  experiments     Experiment[]
+
+  @@map("hypotheses")
+}
+
+model Experiment {
+  id           String     @id @default(cuid())
+  title        String
+  description  String
+  method       String
+  result       String?
+  status       String     // planned | running | completed | cancelled
+  owner        String
+  hypothesisId String?
+  hypothesis   Hypothesis? @relation(fields: [hypothesisId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  feedbacks    Feedback[]
+
+  @@map("experiments")
+}
+
+model Feedback {
+  id           String      @id @default(cuid())
+  title        String
+  insight      String
+  learningType String      // success | failure | observation | improvement
+  actionItems  String?
+  owner        String
+  experimentId String?
+  experiment   Experiment? @relation(fields: [experimentId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("feedbacks")
+}
+
+model ReleaseNote {
+  id             String   @id @default(cuid())
+  version        String
+  summary        String
+  added          String?
+  changed        String?
+  fixed          String?
+  migrationNotes String?
+  owner          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("release_notes")
+}
