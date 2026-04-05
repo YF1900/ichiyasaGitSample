@@ -153,7 +153,7 @@ export function HypothesisList({ hypotheses, constraints }: HypothesisListProps)
                 {hypothesis.constraint && (
                   <Badge variant="outline">{hypothesis.constraint.title}</Badge>
                 )}
-                <span className="text-sm text-zinc-500 ml-auto">
+                <span className="text-sm ml-auto" style={{ color: "#6c757d" }}>
                   担当: {hypothesis.owner}
                 </span>
               </div>

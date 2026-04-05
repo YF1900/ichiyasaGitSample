@@ -5,7 +5,7 @@ export default function AiPromptPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">AI プロンプトセンター</h1>
-        <p className="text-sm text-zinc-500 mt-1">
+        <p className="text-sm mt-1" style={{ color: "#6c757d" }}>
           AIに相談するためのプロンプトテンプレート
         </p>
       </div>

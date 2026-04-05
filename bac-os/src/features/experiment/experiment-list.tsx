@@ -146,13 +146,13 @@ export function ExperimentList({ experiments, hypotheses }: ExperimentListProps)
             <CardContent>
               <div className="space-y-2">
                 <div className="text-sm">
-                  <span className="font-medium text-zinc-700">手法: </span>
-                  <span className="text-zinc-600">{experiment.method}</span>
+                  <span className="font-medium" style={{ color: "#343a40" }}>手法: </span>
+                  <span style={{ color: "#495057" }}>{experiment.method}</span>
                 </div>
                 {experiment.result && (
                   <div className="text-sm">
-                    <span className="font-medium text-zinc-700">結果: </span>
-                    <span className="text-zinc-600">{experiment.result}</span>
+                    <span className="font-medium" style={{ color: "#343a40" }}>結果: </span>
+                    <span style={{ color: "#495057" }}>{experiment.result}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 pt-2">
@@ -164,7 +164,7 @@ export function ExperimentList({ experiments, hypotheses }: ExperimentListProps)
                       仮説: {experiment.hypothesis.title}
                     </Badge>
                   )}
-                  <span className="text-sm text-zinc-500 ml-auto">
+                  <span className="text-sm ml-auto" style={{ color: "#6c757d" }}>
                     担当: {experiment.owner}
                   </span>
                 </div>

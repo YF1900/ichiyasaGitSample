@@ -162,7 +162,7 @@ export function AiPromptCenter() {
                       {copied ? "コピーしました！" : "コピー"}
                     </Button>
                   </div>
-                  <pre className="whitespace-pre-wrap rounded-md bg-zinc-50 p-4 text-sm font-mono border">
+                  <pre className="whitespace-pre-wrap rounded-md p-4 text-sm font-mono border" style={{ background: "#f8f9fa", color: "#1a1a2e", borderColor: "#dee2e6" }}>
                     <code>{generatedPrompt}</code>
                   </pre>
                 </div>

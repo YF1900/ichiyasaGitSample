@@ -146,8 +146,8 @@ export function FeedbackList({ feedbacks, experiments }: FeedbackListProps) {
               <div className="space-y-2">
                 {feedback.actionItems && (
                   <div className="text-sm">
-                    <span className="font-medium text-zinc-700">アクションアイテム: </span>
-                    <span className="text-zinc-600">{feedback.actionItems}</span>
+                    <span className="font-medium" style={{ color: "#343a40" }}>アクションアイテム: </span>
+                    <span style={{ color: "#495057" }}>{feedback.actionItems}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 pt-2">
@@ -159,7 +159,7 @@ export function FeedbackList({ feedbacks, experiments }: FeedbackListProps) {
                       実験: {feedback.experiment.title}
                     </Badge>
                   )}
-                  <span className="text-sm text-zinc-500 ml-auto">
+                  <span className="text-sm ml-auto" style={{ color: "#6c757d" }}>
                     担当: {feedback.owner}
                   </span>
                 </div>

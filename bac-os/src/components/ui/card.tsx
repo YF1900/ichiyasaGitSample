@@ -4,14 +4,19 @@ import { cn } from "@/lib/utils";
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-white shadow-sm hover:shadow-md transition-shadow duration-200",
+      "rounded-xl border shadow-sm hover:shadow-md transition-shadow duration-200",
       className
     )}
-    style={{ borderColor: "var(--border)" }}
+    style={{
+      backgroundColor: "#ffffff",
+      borderColor: "#dee2e6",
+      color: "#1a1a2e",
+      ...style,
+    }}
     {...props}
   />
 ));
@@ -32,11 +37,11 @@ CardHeader.displayName = "CardHeader";
 const CardTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <h3
     ref={ref}
     className={cn("text-base font-semibold leading-snug", className)}
-    style={{ color: "var(--text-primary)" }}
+    style={{ color: "#1a1a2e", ...style }}
     {...props}
   />
 ));
@@ -45,11 +50,11 @@ CardTitle.displayName = "CardTitle";
 const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <p
     ref={ref}
     className={cn("text-sm leading-relaxed", className)}
-    style={{ color: "var(--text-secondary)" }}
+    style={{ color: "#495057", ...style }}
     {...props}
   />
 ));

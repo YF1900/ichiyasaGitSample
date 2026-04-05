@@ -138,7 +138,7 @@ export function ConstraintList({ constraints }: ConstraintListProps) {
                 <Badge variant={severityVariants[constraint.severity] ?? "secondary"}>
                   {constraint.severity}
                 </Badge>
-                <span className="text-sm text-zinc-500 ml-auto">
+                <span className="text-sm ml-auto" style={{ color: "#6c757d" }}>
                   担当: {constraint.owner}
                 </span>
               </div>

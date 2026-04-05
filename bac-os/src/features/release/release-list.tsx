@@ -95,7 +95,7 @@ export function ReleaseList({ releases }: ReleaseListProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Badge variant="default">{release.version}</Badge>
-                  <span className="text-sm text-zinc-500">
+                  <span className="text-sm" style={{ color: "#6c757d" }}>
                     {formatDate(release.createdAt)}
                   </span>
                 </div>
@@ -131,7 +131,7 @@ export function ReleaseList({ releases }: ReleaseListProps) {
                         <Icon size={15} aria-hidden="true" />
                         {label}
                       </div>
-                      <p className="text-sm text-zinc-700 whitespace-pre-wrap pl-5">
+                      <p className="text-sm whitespace-pre-wrap pl-5" style={{ color: "#343a40" }}>
                         {content}
                       </p>
                     </div>
