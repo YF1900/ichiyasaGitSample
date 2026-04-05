@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, BookOpen } from "lucide-react";
+import { PlusLg, PencilFill, TrashFill, BookFill } from "react-bootstrap-icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -86,7 +86,7 @@ export function FeedbackList({ feedbacks, experiments }: FeedbackListProps) {
           description="新しいフィードバックを作成して始めましょう。"
           action={
             <Button onClick={handleCreate}>
-              <Plus className="h-4 w-4" />
+              <PlusLg size={16} aria-hidden="true" />
               新規作成
             </Button>
           }
@@ -105,7 +105,7 @@ export function FeedbackList({ feedbacks, experiments }: FeedbackListProps) {
     <>
       <div className="flex justify-end">
         <Button onClick={handleCreate}>
-          <Plus className="h-4 w-4" />
+          <PlusLg size={16} aria-hidden="true" />
           新規作成
         </Button>
       </div>
@@ -117,7 +117,7 @@ export function FeedbackList({ feedbacks, experiments }: FeedbackListProps) {
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="h-4 w-4" />
+                    <BookFill size={16} aria-hidden="true" />
                     {feedback.title}
                   </CardTitle>
                   <CardDescription>{feedback.insight}</CardDescription>
@@ -126,16 +126,18 @@ export function FeedbackList({ feedbacks, experiments }: FeedbackListProps) {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="編集"
                     onClick={() => handleEdit(feedback)}
                   >
-                    <Pencil className="h-4 w-4" />
+                    <PencilFill size={15} aria-hidden="true" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="削除"
                     onClick={() => handleDelete(feedback.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <TrashFill size={15} aria-hidden="true" style={{ color: "#dc2626" }} />
                   </Button>
                 </div>
               </div>

@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Bot, Copy } from "lucide-react";
+import { Robot, Copy } from "react-bootstrap-icons";
 
 const categories = [
   { value: "all", label: "すべて" },
@@ -92,7 +92,7 @@ export function AiPromptCenter() {
             </CardHeader>
             <CardContent>
               <Button onClick={() => handleOpenTemplate(template)}>
-                <Bot className="h-4 w-4" />
+                <Robot size={16} aria-hidden="true" />
                 プロンプト生成
               </Button>
             </CardContent>
@@ -158,7 +158,7 @@ export function AiPromptCenter() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">生成されたプロンプト</span>
                     <Button variant="outline" size="sm" onClick={handleCopy}>
-                      <Copy className="h-4 w-4" />
+                      <Copy size={15} aria-hidden="true" />
                       {copied ? "コピーしました！" : "コピー"}
                     </Button>
                   </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, FlaskConical } from "lucide-react";
+import { PlusLg, PencilFill, TrashFill, Flask } from "react-bootstrap-icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -87,7 +87,7 @@ export function ExperimentList({ experiments, hypotheses }: ExperimentListProps)
           description="新しい実験を作成して始めましょう。"
           action={
             <Button onClick={handleCreate}>
-              <Plus className="h-4 w-4" />
+              <PlusLg size={16} aria-hidden="true" />
               新規作成
             </Button>
           }
@@ -106,7 +106,7 @@ export function ExperimentList({ experiments, hypotheses }: ExperimentListProps)
     <>
       <div className="flex justify-end">
         <Button onClick={handleCreate}>
-          <Plus className="h-4 w-4" />
+          <PlusLg size={16} aria-hidden="true" />
           新規作成
         </Button>
       </div>
@@ -118,7 +118,7 @@ export function ExperimentList({ experiments, hypotheses }: ExperimentListProps)
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <CardTitle className="flex items-center gap-2">
-                    <FlaskConical className="h-4 w-4" />
+                    <Flask size={16} aria-hidden="true" />
                     {experiment.title}
                   </CardTitle>
                   <CardDescription>{experiment.description}</CardDescription>
@@ -127,16 +127,18 @@ export function ExperimentList({ experiments, hypotheses }: ExperimentListProps)
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="編集"
                     onClick={() => handleEdit(experiment)}
                   >
-                    <Pencil className="h-4 w-4" />
+                    <PencilFill size={15} aria-hidden="true" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="削除"
                     onClick={() => handleDelete(experiment.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <TrashFill size={15} aria-hidden="true" style={{ color: "#dc2626" }} />
                   </Button>
                 </div>
               </div>

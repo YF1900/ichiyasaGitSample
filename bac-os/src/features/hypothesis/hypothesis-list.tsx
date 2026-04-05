@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { PlusLg, PencilFill, TrashFill } from "react-bootstrap-icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -92,7 +92,7 @@ export function HypothesisList({ hypotheses, constraints }: HypothesisListProps)
           description="新しい仮説を作成して始めましょう。"
           action={
             <Button onClick={handleCreate}>
-              <Plus className="h-4 w-4" />
+              <PlusLg size={16} aria-hidden="true" />
               新規作成
             </Button>
           }
@@ -111,7 +111,7 @@ export function HypothesisList({ hypotheses, constraints }: HypothesisListProps)
     <>
       <div className="flex justify-end">
         <Button onClick={handleCreate}>
-          <Plus className="h-4 w-4" />
+          <PlusLg size={16} aria-hidden="true" />
           新規作成
         </Button>
       </div>
@@ -129,16 +129,18 @@ export function HypothesisList({ hypotheses, constraints }: HypothesisListProps)
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="編集"
                     onClick={() => handleEdit(hypothesis)}
                   >
-                    <Pencil className="h-4 w-4" />
+                    <PencilFill size={15} aria-hidden="true" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="削除"
                     onClick={() => handleDelete(hypothesis.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <TrashFill size={15} aria-hidden="true" style={{ color: "#dc2626" }} />
                   </Button>
                 </div>
               </div>

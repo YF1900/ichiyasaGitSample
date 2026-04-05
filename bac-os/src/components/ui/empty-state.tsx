@@ -1,4 +1,4 @@
-import { InboxIcon } from "lucide-react";
+import { InboxFill } from "react-bootstrap-icons";
 
 interface EmptyStateProps {
   title: string;
@@ -8,10 +8,28 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <InboxIcon className="h-12 w-12 text-zinc-300 mb-4" />
-      <h3 className="text-lg font-medium text-zinc-900">{title}</h3>
-      <p className="text-sm text-zinc-500 mt-1 mb-4">{description}</p>
+    <div
+      className="flex flex-col items-center justify-center py-16 text-center rounded-xl border-2 border-dashed"
+      style={{ borderColor: "var(--border)", background: "white" }}
+    >
+      <InboxFill
+        size={40}
+        className="mb-4"
+        style={{ color: "var(--border)" }}
+        aria-hidden="true"
+      />
+      <h3
+        className="text-base font-semibold mb-1"
+        style={{ color: "var(--text-primary)" }}
+      >
+        {title}
+      </h3>
+      <p
+        className="text-sm mb-5 max-w-sm"
+        style={{ color: "var(--text-muted)" }}
+      >
+        {description}
+      </p>
       {action}
     </div>
   );

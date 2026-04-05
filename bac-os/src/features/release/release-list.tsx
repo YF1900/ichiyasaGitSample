@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ReleaseForm } from "@/features/release/release-form";
 import { deleteReleaseNote } from "@/lib/actions";
 import { formatDate } from "@/lib/utils";
-import { Plus, RefreshCw, Wrench, Database, Pencil, Trash2 } from "lucide-react";
+import { PlusLg, ArrowRepeat, Wrench, Database, PencilFill, TrashFill } from "react-bootstrap-icons";
 
 interface ReleaseNote {
   id: string;
@@ -30,8 +30,8 @@ interface ReleaseListProps {
 }
 
 const sections = [
-  { key: "added" as const, label: "追加", icon: Plus, color: "text-green-600" },
-  { key: "changed" as const, label: "変更", icon: RefreshCw, color: "text-blue-600" },
+  { key: "added" as const, label: "追加", icon: PlusLg, color: "text-green-600" },
+  { key: "changed" as const, label: "変更", icon: ArrowRepeat, color: "text-blue-600" },
   { key: "fixed" as const, label: "修正", icon: Wrench, color: "text-yellow-600" },
   { key: "migrationNotes" as const, label: "マイグレーション", icon: Database, color: "text-gray-600" },
 ] as const;
@@ -70,7 +70,7 @@ export function ReleaseList({ releases }: ReleaseListProps) {
         description="最初のリリースノートを作成しましょう"
         action={
           <Button onClick={handleCreate}>
-            <Plus className="h-4 w-4" />
+            <PlusLg size={16} aria-hidden="true" />
             新規作成
           </Button>
         }
@@ -82,7 +82,7 @@ export function ReleaseList({ releases }: ReleaseListProps) {
     <div className="space-y-6">
       <div className="flex justify-end">
         <Button onClick={handleCreate}>
-          <Plus className="h-4 w-4" />
+          <PlusLg size={16} aria-hidden="true" />
           新規作成
         </Button>
       </div>
@@ -103,16 +103,18 @@ export function ReleaseList({ releases }: ReleaseListProps) {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="編集"
                     onClick={() => handleEdit(release)}
                   >
-                    <Pencil className="h-4 w-4" />
+                    <PencilFill size={15} aria-hidden="true" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="削除"
                     onClick={() => handleDelete(release.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <TrashFill size={15} aria-hidden="true" style={{ color: "#dc2626" }} />
                   </Button>
                 </div>
               </div>
@@ -126,7 +128,7 @@ export function ReleaseList({ releases }: ReleaseListProps) {
                   return (
                     <div key={key} className="space-y-1">
                       <div className={`flex items-center gap-1.5 text-sm font-medium ${color}`}>
-                        <Icon className="h-4 w-4" />
+                        <Icon size={15} aria-hidden="true" />
                         {label}
                       </div>
                       <p className="text-sm text-zinc-700 whitespace-pre-wrap pl-5">
