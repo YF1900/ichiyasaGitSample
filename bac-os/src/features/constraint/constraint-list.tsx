@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PlusLg, PencilFill, TrashFill } from "react-bootstrap-icons";
+import { PlusLg, PencilFill, TrashFill, CollectionFill } from "react-bootstrap-icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { Dialog, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { deleteConstraint } from "@/lib/actions";
 import { ConstraintForm } from "./constraint-form";
+import { ConstraintPresetSelector } from "./constraint-preset-selector";
 
 const categoryLabels: Record<string, string> = {
   market: "市場",
@@ -45,6 +46,7 @@ interface ConstraintListProps {
 export function ConstraintList({ constraints }: ConstraintListProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [presetDialogOpen, setPresetDialogOpen] = useState(false);
   const [editingConstraint, setEditingConstraint] = useState<Constraint | null>(null);
 
   const handleCreate = () => {
@@ -74,19 +76,35 @@ export function ConstraintList({ constraints }: ConstraintListProps) {
       <>
         <EmptyState
           title="制約がありません"
-          description="新しい制約を作成して始めましょう。"
+          description="テンプレートから追加するか、手動で作成できます。"
           action={
-            <Button onClick={handleCreate}>
-              <PlusLg size={16} aria-hidden="true" />
-              新規作成
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setPresetDialogOpen(true)}>
+                <CollectionFill size={15} aria-hidden="true" />
+                テンプレートから追加
+              </Button>
+              <Button onClick={handleCreate}>
+                <PlusLg size={16} aria-hidden="true" />
+                手動で作成
+              </Button>
+            </div>
           }
         />
+
+        {/* 手動作成ダイアログ */}
         <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
           <DialogHeader>
             <DialogTitle>制約を作成</DialogTitle>
           </DialogHeader>
           <ConstraintForm onSuccess={handleSuccess} />
+        </Dialog>
+
+        {/* テンプレート選択ダイアログ */}
+        <Dialog open={presetDialogOpen} onClose={() => setPresetDialogOpen(false)}>
+          <DialogHeader>
+            <DialogTitle>テンプレートから制約を追加</DialogTitle>
+          </DialogHeader>
+          <ConstraintPresetSelector onComplete={() => setPresetDialogOpen(false)} />
         </Dialog>
       </>
     );
@@ -94,7 +112,11 @@ export function ConstraintList({ constraints }: ConstraintListProps) {
 
   return (
     <>
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" onClick={() => setPresetDialogOpen(true)}>
+          <CollectionFill size={15} aria-hidden="true" />
+          テンプレートから追加
+        </Button>
         <Button onClick={handleCreate}>
           <PlusLg size={16} aria-hidden="true" />
           新規作成
@@ -147,6 +169,7 @@ export function ConstraintList({ constraints }: ConstraintListProps) {
         ))}
       </div>
 
+      {/* 手動作成/編集ダイアログ */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogHeader>
           <DialogTitle>
@@ -168,6 +191,14 @@ export function ConstraintList({ constraints }: ConstraintListProps) {
           }
           onSuccess={handleSuccess}
         />
+      </Dialog>
+
+      {/* テンプレート選択ダイアログ */}
+      <Dialog open={presetDialogOpen} onClose={() => setPresetDialogOpen(false)}>
+        <DialogHeader>
+          <DialogTitle>テンプレートから制約を追加</DialogTitle>
+        </DialogHeader>
+        <ConstraintPresetSelector onComplete={() => setPresetDialogOpen(false)} />
       </Dialog>
     </>
   );
