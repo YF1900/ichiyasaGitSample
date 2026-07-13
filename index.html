@@ -1,162 +1,481 @@
-<!DOCTYPE HTML>
-<!--
-	Read Only by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-    <title>Ichiyasa Git User Group</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="assets/css/main.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音声データ構造化アプリ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 24px;
+            height: calc(100vh - 200px);
+            max-height: 600px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .voice-input-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .recording-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: #e74c3c;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        .recording-indicator.active {
+            display: flex;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: #e74c3c;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .data-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #e0e0e0;
+            font-size: 13px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            max-height: 150px;
+            overflow-y: auto;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .data-display.empty {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .json-key {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .json-value {
+            color: #764ba2;
+        }
+
+        .json-string {
+            color: #27ae60;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background: #e8e8ff;
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tag.remove {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag.remove:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .error {
+            background: #ffe8e8;
+            color: #e74c3c;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 16px 24px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .content {
+                height: auto;
+                max-height: none;
+            }
+
+            .voice-input-area {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 音声データ構造化</h1>
+            <p>音声で情報を入力して自動構造化</p>
+        </div>
 
-<!-- Header -->
-<section id="header">
-    <header>
-        <span class="image avatar"><img src="images/avatar.png" alt=""/></span>
-        <h1 id="logo"><a href="#">Ichiyasa Git User Group</a></h1>
-    </header>
-    <nav id="nav">
-        <ul>
-            <li><a href="#one" class="active">Japan Git User Groupとは</a></li>
-            <li><a href="#two">イベントのお知らせ</a></li>
-            <li><a href="#three">過去のイベント</a></li>
-        </ul>
-    </nav>
-</section>
-
-<!-- Wrapper -->
-<div id="wrapper">
-
-    <!-- Main -->
-    <div id="main">
-
-        <!-- One -->
-        <section id="one">
-            <div class="container">
-                <header class="major">
-                    <h2>Ichiyasa Git User Group</h2>
-                </header>
-                <p>Gitを利用する人々のコミュニティです。</p>
-                <p>勉強会を企画・運営し、情報交換の場を提供しています。</p>
-                <p>このコミュニティーは、非営利目的で活動しています。</p>
-            </div>
-        </section>
-
-        <!-- Two -->
-        <section id="two">
-            <div class="container">
-                <h2>第２回Git勉強会</h2>
-                <div class="features">
-                    <p>第２回Git勉強会を開催します。みなさま、是非ご参加ください！</p>
-                    <article>
-                        <h3>イベント日時・場所</h3>
-                        <p>3月23日 19:00開始</p>
-                        <p>株式会社〇〇 イベントセミナー会場</p>
-                    </article>
-                    <article>
-                        <h3>スピーカー</h3>
-                        <div class="speaker">
-                            <img src="images/speaker1.png" alt="" class="image"/>
-                            <div class="inner">
-                                <h4>1人目: 未定</h4>
-                                <p>1人目のプロフィール</p>
-                            </div>
-                        </div>
-                        <div class="speaker">
-                            <img src="images/speaker2.png" alt="" class="image"/>
-                            <div class="inner">
-                                <h4>2人目: 未定</h4>
-                                <p>2人目のプロフィール</p>
-                            </div>
-                        </div>
-                    </article>
-                    <article>
-                        <h3>タイムテーブル</h3>
-                        <div class="table-wrapper">
-                            <table class="alt">
-                                <thead>
-                                <tr>
-                                    <th>時間</th>
-                                    <th>内容</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>19:00〜19:05</td>
-                                    <td>オープニング</td>
-                                </tr>
-                                <tr>
-                                    <td>19:05〜19:50</td>
-                                    <td>セッション1: 未定</td>
-                                </tr>
-                                <tr>
-                                    <td>19:50〜20:00</td>
-                                    <td>休憩</td>
-                                </tr>
-                                <tr>
-                                    <td>20:00〜20:45</td>
-                                    <td>セッション2: 未定</td>
-                                </tr>
-                                <tr>
-                                    <td>20:45〜21:00</td>
-                                    <td>クロージング</td>
-                                </tr>
-                                <tr>
-                                    <td>21:00〜</td>
-                                    <td>懇親会</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </article>
+        <div class="content">
+            <!-- 音声入力セクション -->
+            <div class="section">
+                <div class="section-title">音声入力</div>
+                <div class="voice-input-area">
+                    <button class="btn btn-primary" id="startBtn">🎙️ 録音開始</button>
+                    <button class="btn btn-secondary" id="stopBtn" disabled>停止</button>
+                </div>
+                <div class="recording-indicator" id="recordingIndicator">
+                    <div class="dot"></div>
+                    <span>録音中...</span>
                 </div>
             </div>
-        </section>
 
-        <!-- Three -->
-        <section id="three">
-            <div class="container">
-                <h2>過去のイベント</h2>
-                <h3>第１回Git勉強会</h3>
-                <div class="features">
-                    <article>
-                        <h4>Gitはじめの一歩 (@ihcomegaさん)</h4>
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/RZizY7tGPn8?rel=0"
-                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                    </article>
-                    <article>
-                        <h4>Git実践入門 (@syobochimさん)</h4>
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/LocX863UA_w?rel=0"
-                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                    </article>
-                </div>
+            <!-- テキスト入力・表示セクション -->
+            <div class="section">
+                <div class="section-title">入力テキスト</div>
+                <textarea class="text-input" id="textInput" placeholder="ここに音声認識結果が表示されます。手動編集も可能です。"></textarea>
             </div>
-        </section>
+
+            <!-- 構造化データセクション -->
+            <div class="section">
+                <div class="section-title">構造化データ</div>
+                <div class="data-display empty" id="dataDisplay">
+                    テキストを入力して構造化を実行してください
+                </div>
+                <div class="tags" id="tagContainer"></div>
+            </div>
+
+            <!-- アクション -->
+            <div class="section">
+                <button class="btn btn-primary" id="structureBtn" style="width: 100%;">📊 構造化を実行</button>
+                <button class="btn btn-secondary" id="clearBtn" style="width: 100%; margin-top: 8px;">🗑️ クリア</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>※ Web Speech APIを使用しています。対応ブラウザが必要です</p>
+        </div>
     </div>
 
-    <!-- Footer -->
-    <section id="footer">
-        <div class="container">
-            <ul class="copyright">
-                <li>&copy; Untitled. All rights reserved.</li>
-                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-            </ul>
-        </div>
-    </section>
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const textInput = document.getElementById('textInput');
+        const dataDisplay = document.getElementById('dataDisplay');
+        const tagContainer = document.getElementById('tagContainer');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const structureBtn = document.getElementById('structureBtn');
+        const clearBtn = document.getElementById('clearBtn');
 
-</div>
+        let recognition;
+        let isRecording = false;
 
-<!-- Scripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/jquery.scrollzer.min.js"></script>
-<script src="assets/js/jquery.scrolly.min.js"></script>
-<script src="assets/js/skel.min.js"></script>
-<script src="assets/js/util.js"></script>
-<script src="assets/js/main.js"></script>
+        // Web Speech APIの初期化
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            startBtn.disabled = true;
+            startBtn.textContent = '🎤 ブラウザが非対応です';
+            alert('このブラウザはWeb Speech APIに対応していません');
+        } else {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'ja-JP';
+            recognition.continuous = true;
+            recognition.interimResults = true;
 
+            recognition.onstart = () => {
+                isRecording = true;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                recordingIndicator.classList.add('active');
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        textInput.value += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+            };
+
+            recognition.onerror = (event) => {
+                showError(`音声認識エラー: ${event.error}`);
+                stopRecording();
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                recordingIndicator.classList.remove('active');
+            };
+        }
+
+        function startRecording() {
+            textInput.value = '';
+            recognition.start();
+        }
+
+        function stopRecording() {
+            recognition.stop();
+        }
+
+        function structureData() {
+            const text = textInput.value.trim();
+            if (!text) {
+                showError('テキストを入力してください');
+                return;
+            }
+
+            // シンプルな構造化ロジック
+            const data = {
+                rawText: text,
+                wordCount: text.split(/\s+/).length,
+                charCount: text.length,
+                sentences: text.split('。').filter(s => s.trim()).length,
+                keywords: extractKeywords(text),
+                entities: extractEntities(text),
+                timestamp: new Date().toLocaleString('ja-JP')
+            };
+
+            displayStructuredData(data);
+            displayTags(data.keywords, data.entities);
+        }
+
+        function extractKeywords(text) {
+            // シンプルなキーワード抽出（5文字以上の単語）
+            const words = text.split(/[、。，。\s]+/);
+            return [...new Set(words.filter(w => w.length >= 3))].slice(0, 5);
+        }
+
+        function extractEntities(text) {
+            // シンプルなエンティティ抽出の例
+            const entities = [];
+            const datePattern = /\d{4}年\d{1,2}月\d{1,2}日/g;
+            const numberPattern = /\d+/g;
+
+            const dates = text.match(datePattern);
+            const numbers = text.match(numberPattern);
+
+            if (dates) entities.push(...dates);
+            if (numbers) entities.push(...numbers.slice(0, 3));
+
+            return [...new Set(entities)];
+        }
+
+        function displayStructuredData(data) {
+            const html = `
+                <div>
+                    <span class="json-key">"wordCount":</span> <span class="json-value">${data.wordCount}</span>,<br>
+                    <span class="json-key">"charCount":</span> <span class="json-value">${data.charCount}</span>,<br>
+                    <span class="json-key">"sentences":</span> <span class="json-value">${data.sentences}</span>,<br>
+                    <span class="json-key">"timestamp":</span> <span class="json-string">"${data.timestamp}"</span>
+                </div>
+            `;
+            dataDisplay.classList.remove('empty');
+            dataDisplay.innerHTML = html;
+        }
+
+        function displayTags(keywords, entities) {
+            tagContainer.innerHTML = '';
+
+            keywords.forEach(keyword => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.textContent = keyword;
+                tagContainer.appendChild(tag);
+            });
+
+            entities.forEach(entity => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.style.background = '#fff0e8';
+                tag.style.color = '#e67e22';
+                tag.textContent = entity;
+                tagContainer.appendChild(tag);
+            });
+        }
+
+        function showError(message) {
+            const error = document.createElement('div');
+            error.className = 'error';
+            error.textContent = message;
+            document.querySelector('.section:last-of-type').appendChild(error);
+            setTimeout(() => error.remove(), 3000);
+        }
+
+        function clearAll() {
+            textInput.value = '';
+            dataDisplay.classList.add('empty');
+            dataDisplay.innerHTML = 'テキストを入力して構造化を実行してください';
+            tagContainer.innerHTML = '';
+        }
+
+        // イベントリスナー
+        startBtn.addEventListener('click', startRecording);
+        stopBtn.addEventListener('click', stopRecording);
+        structureBtn.addEventListener('click', structureData);
+        clearBtn.addEventListener('click', clearAll);
+
+        // Enterキーで構造化実行
+        textInput.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                structureData();
+            }
+        });
+    </script>
 </body>
 </html>
